@@ -1,19 +1,25 @@
 function Footer() {
     return (
         <footer className="bg-zinc-950 border-t border-zinc-800 py-12 px-4 relative overflow-hidden">
+            {/* Background Text */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-                <h2 className="text-[8rem] md:text-[12rem] font-black bg-gradient-to-b from-white/5 to-zinc-800/5 bg-clip-text text-white
-                opacity-10 select-none whitespace-nowrap">
-                    DEV DUAL
+                <h2
+                    className="text-[8rem] md:text-[8rem] font-black 
+                    bg-gradient-to-r from-[#FF69B4] to-[#8A2BE2] 
+                    bg-clip-text text-transparent 
+                    opacity-25 select-none whitespace-nowrap tracking-tight"
+                >
+                    DEV COMPETE
                 </h2>
             </div>
-            
+
+            {/* Footer Content */}
             <div className="max-w-5xl mx-auto relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-8 justify-items-center md:justify-items-start">
                     {/* Brand */}
                     <div>
-                        <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent mb-3">
-                            Dev Dual
+                        <h3 className="text-2xl font-bold bg-gradient-to-r from-[#FF69B4] to-[#8A2BE2]  bg-clip-text text-transparent mb-3">
+                            Dev compete
                         </h3>
                         <p className="text-zinc-400 mb-4 max-w-md">
                             The ultimate platform for competitive programming. Challenge yourself, 
@@ -41,7 +47,7 @@ function Footer() {
 
                     {/* Quick Links */}
                     <div className="md:pl-70">
-                        <h4 className="text-white font-bold mb-4">Quick Links</h4>
+                        <h4 className="text-[#8A2BE2] font-bold mb-4">Quick Links</h4>
                         <ul className="space-y-2">
                             <li><a href="/" className="text-zinc-400 hover:text-white transition-colors">Home</a></li>
                             <li><a href="/battle" className="text-zinc-400 hover:text-white transition-colors">Create Room</a></li>
@@ -53,7 +59,7 @@ function Footer() {
                 {/* Bottom Bar */}
                 <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-zinc-500 text-sm">
-                        © 2025 Dev Dual. All rights reserved.
+                        © 2025 Dev compete. All rights reserved.
                     </p>
                     <div className="flex gap-6 text-sm">
                         <a href="/privacy-policy" className="text-zinc-500 hover:text-white transition-colors">Privacy Policy</a>
