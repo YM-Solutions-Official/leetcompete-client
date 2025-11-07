@@ -6,6 +6,7 @@ import { useUser } from "../context/UserContext";
 
 function ChatBot({ roomId }) {
   const { userData } = useUser();
+  // dfdfdfdfd
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState(() => {
     // ✅ Load saved messages for this room
