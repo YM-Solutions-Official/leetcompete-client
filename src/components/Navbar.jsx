@@ -1,4 +1,5 @@
 import logo from '/logo.jpg';
+
 import { IoPersonCircle } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -55,11 +56,16 @@ function Navbar() {
                   src={logo}
                   className="w-12 h-12 rounded-lg  transition-all group-hover:border-blue-400 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-blue-500/20 rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(255, 105, 180, 0.3))' }}></div>
               </div>
               <div>
-                <h1 className="text-2xl ms-2 font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                  Dev Dual
+                <h1 className="russo-one-font text-2xl ms-2 font-bold">
+                  <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #8A2BE2, #9A40E8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    Dev
+                  </span>
+                  <span className="text-transparent bg-clip-text ml-1" style={{ backgroundImage: 'linear-gradient(135deg, #FF69B4, #FF1493)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                    Compete
+                  </span>
                 </h1>
               </div>
             </div>
@@ -67,9 +73,21 @@ function Navbar() {
             <div className="flex items-center gap-3">
               {isLoggedIn ? (
                 <>
-                  <button className="md:flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-all" onClick={() => navigate('/profile')}>
+                  <button 
+                    className="md:flex items-center gap-2 px-4 py-2 text-zinc-300 rounded-lg transition-all font-medium" 
+                    onClick={() => navigate('/profile')}
+                    style={{ color: '#FF69B4' }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = 'rgba(138, 43, 226, 0.2)';
+                      e.target.style.color = '#8A2BE2';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.color = '#FF69B4';
+                    }}
+                  >
                     <IoPersonCircle className="w-8 h-8" />
-                    <span className="font-medium">Profile</span>
+                    <span>Profile</span>
                   </button>
                   <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all" onClick={handleLogoutClick}>
                     Logout
@@ -79,13 +97,36 @@ function Navbar() {
                 <>
                   <button
                     onClick={() => navigate('/login')}
-                    className="px-5 py-2 text-white hover:text-blue-400 font-medium transition-colors"
+                    className="px-5 py-2 text-white font-medium transition-colors rounded-lg"
+                    style={{ color: '#FF69B4' }}
+                    onMouseEnter={(e) => {
+                      e.target.style.color = '#8A2BE2';
+                      e.target.style.backgroundColor = 'rgba(255, 105, 180, 0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.color = '#FF69B4';
+                      e.target.style.backgroundColor = 'transparent';
+                    }}
                   >
                     Login
                   </button>
                   <button
                     onClick={() => navigate('/signup')}
-                    className="px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all"
+                    className="px-5 py-2 text-white rounded-lg font-medium transition-all"
+                    style={{ 
+                      background: 'linear-gradient(135deg, #8A2BE2, #9A40E8)',
+                      boxShadow: '0 4px 15px rgba(138, 43, 226, 0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = 'linear-gradient(135deg, #FF69B4, #FF1493)';
+                      e.target.style.boxShadow = '0 6px 20px rgba(255, 105, 180, 0.4)';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = 'linear-gradient(135deg, #8A2BE2, #9A40E8)';
+                      e.target.style.boxShadow = '0 4px 15px rgba(138, 43, 226, 0.3)';
+                      e.target.style.transform = 'translateY(0)';
+                    }}
                   >
                     Sign Up
                   </button>
