@@ -20,7 +20,8 @@ const History = lazy(() => import("./pages/History"));
 const WaitingWindow = lazy(() => import("./pages/WaitingWindow.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const EditProfile = lazy(() => import("./components/profile/editProfile"));
-export const serverURL = import.meta.env.VITE_SERVER_URL;
+// Provide a fallback in case the Vite env var isn't loaded (e.g. env file placed in wrong folder)
+export const serverURL = import.meta.env.VITE_SERVER_URL ?? "http://localhost:8080/api";
 
 function App() {
   const location = useLocation();
