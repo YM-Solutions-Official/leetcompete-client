@@ -1,31 +1,40 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function CTASection() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <section className="bg-black py-24 px-4">
-            <div className="max-w-4xl mx-auto text-center relative">
-                {/* Gradient background blur */}
-                <div className="absolute inset-x-0 top-0 w-3/4 h-48 mx-auto bg-gradient-to-r from-blue-600 to-orange-600 rounded-full mix-blend-lighten filter blur-3xl opacity-30"></div>
+  return (
+    <section className="relative bg-black py-28 px-4 overflow-hidden">
+      {/* Background glows */}
+      <div className="absolute inset-0 flex justify-center items-center">
+       
+        <div className="w-[500px] h-[500px] bg-orange-600/20 rounded-full blur-[150px] absolute top-40 right-1/3"></div>
+      </div>
 
-                <div className="relative z-10">
-                    <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                        Ready to Prove Your Skills?
-                    </h2>
-                    <p className="text-zinc-300 text-xl md:text-2xl mb-12 max-w-2xl mx-auto">
-                        Join thousands of developers in the ultimate coding arena. Create a room, challenge a friend, and start your dual now.
-                    </p>
-                    <button
-                        onClick={() => navigate('/battle')}
-                        className="group relative px-12 py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-bold text-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-blue-500/40 hover:scale-105 transform"
-                    >
-                        ⚡ Start Battling Now
-                    </button>
-                </div>
-            </div>
-        </section>
-    );
+      <div className="relative max-w-4xl mx-auto text-center z-10">
+        <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
+          Ready to{" "}
+          <span className="bg-gradient-to-r from-blue-400 to-orange-400 bg-clip-text text-transparent">
+            Prove Your Skills
+          </span>
+          ?
+        </h2>
+
+        <p className="text-zinc-400 text-lg md:text-2xl mb-12 max-w-2xl mx-auto leading-relaxed">
+          Join thousands of developers in the ultimate coding arena. Create a
+          room, challenge a friend, and start your duel now.
+        </p>
+
+        <button
+          onClick={() => navigate("/battle")}
+          className="group relative px-14 py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-bold text-xl shadow-[0_0_25px_rgba(59,130,246,0.3)] hover:shadow-[0_0_35px_rgba(59,130,246,0.5)] transition-all duration-300 hover:scale-105 hover:from-blue-700 hover:to-blue-800"
+        >
+          ⚡ Start Battling Now
+          <span className="absolute inset-0 rounded-xl border border-blue-400/30 group-hover:border-blue-400/60 transition-all"></span>
+        </button>
+      </div>
+    </section>
+  );
 }
 
 export default CTASection;

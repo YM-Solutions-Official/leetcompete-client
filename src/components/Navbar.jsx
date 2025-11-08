@@ -1,4 +1,4 @@
-import logo from '/logo.jpg';
+import logo from '/devCompete.png';
 import { IoPersonCircle } from "react-icons/io5";
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { useUser } from '../context/UserContext';
@@ -53,10 +53,7 @@ function Navbar() {
             >
             
               <div>
-                <h1 className="text-2xl ms-2 font-bold">
-                  <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Leet</span>
-                  <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Compete</span>
-                </h1>
+                <img src={logo} alt="Logo" className="h-15 w-15" />
               </div>
             </Link>
 

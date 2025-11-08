@@ -4,7 +4,7 @@ function Footer() {
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
                 <h2 className="text-[8rem] md:text-[12rem] font-black bg-gradient-to-b from-white/5 to-zinc-800/5 bg-clip-text text-white
                 opacity-10 select-none whitespace-nowrap">
-                    DEV DUAL
+                    DEV COMPETE
                 </h2>
             </div>
             
@@ -13,7 +13,7 @@ function Footer() {
                     {/* Brand */}
                     <div>
                         <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent mb-3">
-                            Dev Dual
+                            Dev Compete
                         </h3>
                         <p className="text-zinc-400 mb-4 max-w-md">
                             The ultimate platform for competitive programming. Challenge yourself, 
