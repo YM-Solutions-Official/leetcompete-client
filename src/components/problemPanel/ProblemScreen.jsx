@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBattle } from "../../context/BattleContext";
 import ProblemNavbar from "./problemNavbar.jsx";
@@ -9,6 +9,11 @@ function ProblemScreen() {
     const location = useLocation();
     const navigate = useNavigate();
     const { battleData } = useBattle();
+
+    useEffect(() => {
+        console.log('ProblemScreen battleData:', battleData);
+    })
+    
     const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
     const [problems, setProblems] = useState([]);
     const [metadata, setMetadata] = useState(null);
@@ -19,7 +24,7 @@ function ProblemScreen() {
         // Try to get problems from context first, then from location state
         const problemsFromContext = battleData.problems;
         const problemsFromState = location.state?.problems;
-        
+
         if (problemsFromContext && problemsFromContext.length > 0) {
             console.log('Using problems from context:', problemsFromContext);
             setProblems(problemsFromContext);
@@ -34,54 +39,58 @@ function ProblemScreen() {
         }
     }, [location, navigate, battleData]);
 
-    const currentProblem = problems[currentProblemIndex];
+  const currentProblem = problems[currentProblemIndex];
 
-    const handleNextProblem = () => {
-        if (currentProblemIndex < problems.length - 1) {
-            setCurrentProblemIndex(prev => prev + 1);
-        }
-    };
+  const handleNextProblem = () => {
+    if (currentProblemIndex < problems.length - 1) {
+      setCurrentProblemIndex((prev) => prev + 1);
+    }
+  };
 
-    const handlePrevProblem = () => {
-        if (currentProblemIndex > 0) {
-            setCurrentProblemIndex(prev => prev - 1);
-        }
-    };
+  const handlePrevProblem = () => {
+    if (currentProblemIndex > 0) {
+      setCurrentProblemIndex((prev) => prev - 1);
+    }
+  };
 
-    const handleProblemSelect = (index) => {
-        setCurrentProblemIndex(index);
-    };
+  const handleProblemSelect = (index) => {
+    setCurrentProblemIndex(index);
+  };
 
-    const handleMouseDown = (e) => {
-        e.preventDefault();
-        isDraggingRef.current = true;
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-    };
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
 
     const handleMouseMove = (e) => {
         if (!isDraggingRef.current) return;
         const container = document.getElementById('panels-container');
         if (!container) return;
-        
+
         const containerRect = container.getBoundingClientRect();
         const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
         setLeftPanelWidth(Math.max(30, Math.min(70, newWidth)));
     };
 
-    const handleMouseUp = () => {
-        isDraggingRef.current = false;
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-    };
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
 
-    if (!currentProblem) {
-        return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>;
-    }
+  if (!currentProblem) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
     return (
         <>
-            <ProblemNavbar 
+            <ProblemNavbar
                 problems={problems}
                 currentIndex={currentProblemIndex}
                 onProblemSelect={handleProblemSelect}
@@ -89,7 +98,7 @@ function ProblemScreen() {
             />
             <div id="panels-container" className="flex h-[calc(100vh-64px)]">
                 <div style={{ width: `${leftPanelWidth}%` }}>
-                    <LeftPanel 
+                    <LeftPanel
                         problem={currentProblem}
                         currentIndex={currentProblemIndex}
                         totalProblems={problems.length}
@@ -101,9 +110,9 @@ function ProblemScreen() {
                     onMouseDown={handleMouseDown}
                     className="w-1 bg-zinc-800 hover:bg-blue-600 cursor-ew-resize active:bg-blue-500 transition-colors"
                 />
-                
+
                 <div style={{ width: `${100 - leftPanelWidth}%` }}>
-                    <RightPanel 
+                    <RightPanel
                         problem={currentProblem}
                     />
                 </div>
