@@ -4,10 +4,12 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { useBattle } from "../../context/BattleContext";
 
 function ProblemNavbar({ problems, currentIndex, onProblemSelect, metadata }) {
-  const navigate = useNavigate();
-  const { resetBattle } = useBattle();
-  const [showEndBattleModal, setShowEndBattleModal] = useState(false);
-  const [showProgressModal, setShowProgressModal] = useState(false);
+
+    console.log('Rendering ProblemNavbar with problems:', problems, 'currentIndex:', currentIndex, 'metadata:', metadata);
+    const navigate = useNavigate();
+    const { resetBattle } = useBattle();
+    const [showEndBattleModal, setShowEndBattleModal] = useState(false);
+    const [showProgressModal, setShowProgressModal] = useState(false);
 
   const formatTime = (duration) => {
     const hours = Math.floor(duration / 60);
@@ -50,72 +52,72 @@ function ProblemNavbar({ problems, currentIndex, onProblemSelect, metadata }) {
     return playerProblems.filter((p) => p.status === "solved").length;
   };
 
-  return (
-    <>
-      <nav className="bg-zinc-900 border-b border-zinc-700 px-6 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => {
-                resetBattle();
-                navigate("/battle");
-              }}
-              className="text-zinc-400 hover:text-white transition-colors"
-            >
-              ← Back
-            </button>
-            <div className="h-6 w-px bg-zinc-700"></div>
-            <h1 className="text-white font-bold text-lg">LeetCompete</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            {problems?.map((problem, idx) => (
-              <button
-                key={problem._id}
-                onClick={() => onProblemSelect(idx)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  idx === currentIndex
-                    ? "bg-blue-600 text-white"
-                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-                }`}
-              >
-                {idx + 1}
-              </button>
-            ))}
-          </div>{" "}
-          {/* Right: Timer/Info */}
-          <div className="flex items-center gap-4">
-            {metadata && (
-              <div className="flex items-center gap-3 text-sm">
-                <div className="flex items-center gap-1">
-                  <span className="text-zinc-400">Time:</span>
-                  <span className="text-white font-semibold font-mono">
-                    {formatTime(metadata.duration)}
-                  </span>
+    return (
+        <>
+            <nav className="bg-zinc-900 border-b border-zinc-700 px-6 py-3">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => {
+                                resetBattle();
+                                navigate('/battle');
+                            }}
+                            className="text-zinc-400 hover:text-white transition-colors"
+                        >
+                            ← Back
+                        </button>
+                        <div className="h-6 w-px bg-zinc-700"></div>
+                        <h1 className="text-white font-bold text-lg">Dev Dual</h1>
+                    </div>
+
+                <div className="flex items-center gap-2">
+                    {problems?.map((problem, idx) => (
+                        <button
+                            key={problem._id}
+                            onClick={() => onProblemSelect(idx)}
+                            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                                idx === currentIndex
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                            }`}
+                        >
+                            {idx + 1}
+                        </button>
+                    ))}
+                </div>                    {/* Right: Timer/Info */}
+                    <div className="flex items-center gap-4">
+                        {metadata && (  
+                            <div className="flex items-center gap-3 text-sm">
+                                <div className="flex items-center gap-1">
+                                    <span className="text-zinc-400">Time:</span>
+                                    <span className="text-white font-semibold font-mono">
+                                        {formatTime(metadata.duration)}
+                                    </span>
+                                </div>
+                                <div className="h-4 w-px bg-zinc-700"></div>
+                                <div className="flex items-center gap-1">
+                                    <span className="text-zinc-400">Total:</span>
+                                    <span className="text-white font-semibold">
+                                        {metadata.totalProblems}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                        <button 
+                            onClick={() => setShowProgressModal(true)}
+                            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium text-sm"
+                        >
+                            Progress
+                        </button>
+                        <button 
+                            onClick={() => setShowEndBattleModal(true)}
+                            className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-medium text-sm"
+                        >
+                            End Battle
+                        </button>
+                    </div>
                 </div>
-                <div className="h-4 w-px bg-zinc-700"></div>
-                <div className="flex items-center gap-1">
-                  <span className="text-zinc-400">Total:</span>
-                  <span className="text-white font-semibold">
-                    {metadata.totalProblems}
-                  </span>
-                </div>
-              </div>
-            )}
-            <button
-              onClick={() => setShowProgressModal(true)}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium text-sm"
-            >
-              Progress
-            </button>
-            <button
-              onClick={() => setShowEndBattleModal(true)}
-              className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-medium text-sm"
-            >
-              End Battle
-            </button>
-          </div>
-        </div>
-      </nav>
+            </nav>
 
       {/* Progress Modal */}
       {showProgressModal && (
