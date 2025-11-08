@@ -4,7 +4,7 @@ function Footer() {
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
                 <h2 className="text-[8rem] md:text-[12rem] font-black bg-gradient-to-b from-white/5 to-zinc-800/5 bg-clip-text text-white
                 opacity-10 select-none whitespace-nowrap">
-                    DEV DUAL
+                    DEV COMPETE
                 </h2>
             </div>
             
