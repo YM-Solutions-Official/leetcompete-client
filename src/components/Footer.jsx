@@ -13,7 +13,7 @@ function Footer() {
                     {/* Brand */}
                     <div>
                         <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent mb-3">
-                            Dev Dual
+                            Dev Compete
                         </h3>
                         <p className="text-zinc-400 mb-4 max-w-md">
                             The ultimate platform for competitive programming. Challenge yourself, 
