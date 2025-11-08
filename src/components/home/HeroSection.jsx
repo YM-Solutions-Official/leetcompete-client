@@ -22,17 +22,16 @@ function HeroSection() {
   }, []);
 
   const Cursor = () => (
-    <span className="animate-pulse text-4xl md:text-6xl text-white">|</span>
+    <span className="animate-pulse text-6xl md:text-8xl text-white">|</span>
   );
 
   return (
     <section className="min-h-[calc(100vh-80px)] bg-black flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      {/* Background glowing shapes for visual appeal */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-600 rounded-full mix-blend-lighten filter blur-3xl opacity-20 animate-blob"></div>
       <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-orange-600 rounded-full mix-blend-lighten filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
 
       <div className="max-w-6xl mx-auto text-center relative z-10">
-        <h1 className="text-6xl md:text-8xl font-bold mb-6 min-h-[100px] md:min-h-[120px]">
+        <h1 className="mt-15 text-6xl md:text-8xl font-bold mb-6 min-h-[100px] md:min-h-[120px]">
           <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
             {displayedText.slice(0, 4)}
           </span>
@@ -43,8 +42,8 @@ function HeroSection() {
         </h1>
 
         <p className="text-zinc-300 text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
-          Challenge developers worldwide. Compete in real-time coding battles and
-          prove your skills.
+          Challenge developers worldwide. Compete in real-time coding battles
+          and prove your skills.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
