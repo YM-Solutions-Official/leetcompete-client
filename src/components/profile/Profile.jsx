@@ -9,7 +9,8 @@ import { Tooltip } from "react-tooltip";
 function Profile() {
   const navigate = useNavigate();
   const { userData } = useUser();
-
+  console.log("User Data in Profile:", userData);
+  
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -60,7 +61,7 @@ function Profile() {
               {/* Left Section - Profile Info */}
               <div className="flex-1 bg-zinc-900/50 rounded-xl p-6 border border-zinc-700 flex flex-col justify-center items-center">
                 <div
-                  className="w-20 h-20 border-2 border-white bg-zinc-800 rounded-full flex items-center justify-center mb-4 relative cursor-pointer hover:ring-2 hover:ring-blue-400 transition"
+                  className="w-24 h-24 border-2 border-zinc-600 bg-zinc-800 rounded-full flex items-center justify-center mb-4 relative cursor-pointer hover:border-zinc-500 transition-colors group"
                   data-tooltip-id="my-tooltip"
                   data-tooltip-content="Click to Change Profile Picture"
                   data-tooltip-place="top"
@@ -79,41 +80,52 @@ function Profile() {
                   ) : (
                     <FaUser className="text-white text-3xl" />
                   )}
+                  <div className="absolute -bottom-1 -right-1 bg-zinc-700 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <BsFillPencilFill className="text-white text-xs" />
+                  </div>
                 </div>
 
                 {/* Username */}
-                <div className="bg-zinc-800 rounded-lg px-4 py-3 mb-4 border border-zinc-700 w-full">
+                <div className="bg-zinc-800/70 rounded-lg px-4 py-3 mb-3 border border-zinc-700 w-full hover:bg-zinc-800 transition-colors">
                   <div className="flex items-center justify-between">
                     <p className="text-lg font-semibold">
                       {userData?.name || "Anonymous"}
                     </p>
-                    <BsFillPencilFill className="text-zinc-400 ml-2 cursor-pointer hover:text-white" onClick={()=>navigate('/edit-profile')} />
+                    <BsFillPencilFill 
+                      className="text-zinc-500 ml-2 cursor-pointer hover:text-zinc-300 transition-colors" 
+                      onClick={() => navigate('/edit-profile')} 
+                    />
                   </div>
                 </div>
 
-                <div className="bg-zinc-800 rounded-lg px-4 py-3 mb-4 border border-zinc-700 w-full">
+                {/* Description */}
+                <div className="bg-zinc-800/70 rounded-lg px-4 py-3 mb-3 border border-zinc-700 w-full hover:bg-zinc-800 transition-colors">
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-zinc-300">
                       {userData?.description || "No description provided"}
                     </p>
-                    <BsFillPencilFill className="text-zinc-400 ml-2 cursor-pointer hover:text-white" onClick={()=>navigate('/edit-profile')} />
+                    <BsFillPencilFill 
+                      className="text-zinc-500 ml-2 cursor-pointer hover:text-zinc-300 transition-colors flex-shrink-0" 
+                      onClick={() => navigate('/edit-profile')} 
+                    />
                   </div>
                 </div>
 
-                <div className="bg-zinc-800 rounded-lg px-4 py-3 mb-4 border border-zinc-700 w-full">
+                {/* Email */}
+                <div className="bg-zinc-800/70 rounded-lg px-4 py-3 mb-4 border border-zinc-700 w-full">
                   <p className="text-sm text-zinc-300">
                     {userData?.email || "No email"}
                   </p>
                 </div>
 
                 {/* Join Date and Player ID */}
-                <div className="space-y-1 text-sm text-zinc-400 text-center w-full">
+                <div className="space-y-1.5 text-sm text-zinc-400 text-center w-full">
                   <p>
-                    <span className="font-medium">Joined On:</span>{" "}
+                    <span className="font-medium text-zinc-300">Joined On:</span>{" "}
                     {formatDate(userData?.createdAt)}
                   </p>
                   <p>
-                    <span className="font-medium">Player ID:</span>{" "}
+                    <span className="font-medium text-zinc-300">Player ID:</span>{" "}
                     {userData?._id?.slice(-10) || "N/A"}
                   </p>
                 </div>
@@ -121,23 +133,31 @@ function Profile() {
 
               {/* Right Section - Stats */}
               <div className="flex-1 bg-zinc-900/50 rounded-xl p-6 border border-zinc-700 flex items-center justify-center">
-                <div className="text-center space-y-3">
-                  <p className="text-lg">
-                    <span className="font-semibold">No of battles:</span>{" "}
-                    {totalBattles}
-                  </p>
-                  <p className="text-lg">
-                    <span className="font-semibold">Win:</span>{" "}
-                    <span className="text-green-500">{wins}</span>
-                  </p>
-                  <p className="text-lg">
-                    <span className="font-semibold">Lose:</span>{" "}
-                    <span className="text-red-500">{losses}</span>
-                  </p>
-                  <p className="text-lg">
-                    <span className="font-semibold">Win Rate:</span>{" "}
-                    <span className="text-blue-500">{winRate}%</span>
-                  </p>
+                <div className="text-center space-y-4 w-full">
+                  <div className="bg-zinc-800/50 rounded-lg px-4 py-3 border border-zinc-700/50">
+                    <p className="text-base text-zinc-400 mb-1">Total Battles</p>
+                    <p className="text-2xl font-semibold text-white">{totalBattles}</p>
+                  </div>
+                  
+                  <div className="bg-zinc-800/50 rounded-lg px-4 py-3 border border-zinc-700/50">
+                    <p className="text-base text-zinc-400 mb-1">Wins</p>
+                    <p className="text-2xl font-semibold text-green-500">{wins}</p>
+                  </div>
+                  
+                  <div className="bg-zinc-800/50 rounded-lg px-4 py-3 border border-zinc-700/50">
+                    <p className="text-base text-zinc-400 mb-1">Losses</p>
+                    <p className="text-2xl font-semibold text-red-500">{losses}</p>
+                  </div>
+                  
+                  <div className="bg-zinc-800/50 rounded-lg px-4 py-3 border border-zinc-700/50">
+                    <p className="text-base text-zinc-400 mb-1">Win Rate</p>
+                    <p className="text-2xl font-semibold text-blue-500">{winRate}%</p>
+                  </div>
+                  
+                  <div className="bg-zinc-800/50 rounded-lg px-4 py-3 border border-zinc-700/50">
+                    <p className="text-base text-zinc-400 mb-1">Rating</p>
+                    <p className="text-2xl font-semibold text-blue-500">{userData?.rating || 100}</p>
+                  </div>
                 </div>
               </div>
             </div>
