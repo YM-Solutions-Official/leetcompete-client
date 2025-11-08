@@ -22,6 +22,7 @@ const WaitingWindow = lazy(() => import("./pages/WaitingWindow.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const EditProfile = lazy(() => import("./components/profile/EditProfile.jsx"));
 const Auth0Callback = lazy(() => import("./components/Auth0Callback"));
+const LeaderBoard = lazy(() => import("./pages/LeaderBoard.jsx"));
 export const serverURL = import.meta.env.VITE_SERVER_URL;
 
 function App() {
@@ -126,7 +127,7 @@ function App() {
           />
           <Route
             path="/leaderboard"
-            element={
+            element={ 
                 <LeaderBoard />
             }
           />

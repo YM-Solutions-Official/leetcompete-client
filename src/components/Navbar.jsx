@@ -1,6 +1,6 @@
 import logo from '/logo.jpg';
 import { IoPersonCircle } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
 import { serverURL } from '../App';
@@ -47,54 +47,65 @@ function Navbar() {
       <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/80 border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div 
-              onClick={() => navigate('/')}
+            <Link 
+              to="/"
               className="flex items-center gap-3 cursor-pointer group"
             >
-              <div className="relative">
-                <img
-                  alt="Dev Dual Logo"
-                  src={logo}
-                  className="w-12 h-12 rounded-lg  transition-all group-hover:border-blue-400 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-blue-500/20 rounded-lg blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </div>
+            
               <div>
-                <h1 className="text-2xl ms-2 font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                  Dev Dual
+                <h1 className="text-2xl ms-2 font-bold">
+                  <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Leet</span>
+                  <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Compete</span>
                 </h1>
               </div>
-            </div>
+            </Link>
 
             <div className="flex items-center gap-3">
-              <button className="md:flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-all" onClick={() => navigate('/leaderboard')}>
-                    <MdLeaderboard className="w-8 h-6" />
-                    <span className="font-medium">Leaderboard</span>
-              </button>
+              <Link to="/leaderboard" className="md:flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-all">
+                <MdLeaderboard className="w-8 h-6" />
+                <span className="font-medium">Leaderboard</span>
+              </Link>
               {isLoggedIn ? (
                 <>
-                  <button className="md:flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-all" onClick={() => navigate('/profile')}>
-                    <IoPersonCircle className="w-8 h-8" />
-                    <span className="font-medium">Profile</span>
-                  </button>
+                  {/* --- START: UPDATED PROFILE BUTTON --- */}
+                  <Link to="/profile" className="md:flex items-center gap-3 px-3 py-2 text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-all">
+                    <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center bg-zinc-700 border-2 border-zinc-600 flex-shrink-0">
+                      {userData?.photoURL ? (
+                        <img
+                          src={userData.photoURL}
+                          alt={userData.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : userData?.name ? (
+                        <span className="text-sm font-bold uppercase text-white">
+                          {userData.name.charAt(0)}
+                        </span>
+                      ) : (
+                        <IoPersonCircle className="w-8 h-8 text-zinc-400" />
+                      )}
+                    </div>
+                    <span className="font-medium truncate">{userData.name || "Profile"}</span>
+                  </Link>
+                  {/* --- END: UPDATED PROFILE BUTTON --- */}
+                  
                   <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all" onClick={handleLogoutClick}>
                     Logout
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    onClick={() => navigate('/login')}
+                  <Link
+                    to="/login"
                     className="px-5 py-2 text-white hover:text-blue-400 font-medium transition-colors"
                   >
                     Login
-                  </button>
-                  <button
-                    onClick={() => navigate('/signup')}
+                  </Link>
+                  <Link
+                    to="/signup"
                     className="px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all"
                   >
                     Sign Up
-                  </button>
+                  </Link>
                 </>
               )}
             </div>
