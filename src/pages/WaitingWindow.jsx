@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaCopy, FaCheck } from "react-icons/fa";
+import { FaCopy, FaCheck, FaUser } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useBattle } from "../context/BattleContext";
 import { useUser } from "../context/UserContext";
@@ -10,6 +10,28 @@ import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import { socket } from "../socket";
 
+// New sub-component for handling profile images
+const PlayerImage = ({ photoURL, name }) => {
+  if (photoURL) {
+    return (
+      <img
+        src={photoURL}
+        alt={name || "Player"}
+        className="w-full h-full rounded-full object-cover"
+      />
+    );
+  }
+  if (name) {
+    return (
+      <span className="text-white text-3xl font-bold uppercase">
+        {name.charAt(0)}
+      </span>
+    );
+  }
+  // Default "dummy" icon
+  return <FaUser className="text-white text-3xl" />;
+};
+
 function WaitingWindow() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,9 +41,7 @@ function WaitingWindow() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [opponentJoined, setOpponentJoined] = useState(false);
-  const [opponentName, setOpponentName] = useState("");
 
-  // Normalize room ID (trim and uppercase)
   const roomId = (location.state?.roomId || battleData.roomId)
     ?.trim()
     .toUpperCase();
@@ -30,17 +50,26 @@ function WaitingWindow() {
   useEffect(() => {
     if (location.state?.problems && location.state?.roomId) {
       const normalizedRoomId = location.state.roomId.trim().toUpperCase();
+      
+      // Ensure host's photoURL is also passed if available when initializing for a guest
+      const hostData = location.state.host || null;
+      if (hostData && !hostData.photoURL && location.state.hostPhotoURL) {
+          hostData.photoURL = location.state.hostPhotoURL;
+      }
 
       updateBattleData({
         problems: location.state.problems,
         metadata: location.state.metadata,
         roomId: normalizedRoomId,
         isHost: !!location.state.isHost,
-        host: location.state.host || null,
+        host: hostData, // Use the potentially enriched hostData
+        opponentJoined: false,
+        opponentName: null,
+        opponentPhoto: null,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only once on mount
+  }, [location.state]); // Dependency on location.state is correct here
 
   // Setup socket listeners
   useEffect(() => {
@@ -48,32 +77,29 @@ function WaitingWindow() {
 
     console.log(`Joining room: "${roomId}"`);
 
-    // Join the room
     socket.emit("join-room", {
       roomId,
       userId: userData._id,
       name: userData.name,
+      photoURL: userData.photoURL, // Send our photo when we join
     });
 
-    // Listen for opponent join event
-    const handleOpponentJoined = ({ userId, name }) => {
-      console.log("Opponent joined:", name || userId);
+    const handleOpponentJoined = ({ userId, name, photoURL }) => {
+      console.log("Opponent joined:", name || userId, photoURL);
       toast.success(`${name || "Opponent"} joined the room!`);
       setOpponentJoined(true);
-      setOpponentName(name || "Opponent");
 
       updateBattleData({
         opponentJoined: true,
         opponentName: name || "Opponent",
+        opponentPhoto: photoURL || null, // Ensure photoURL is correctly stored
       });
     };
 
-    // Listen for match start
     const handleMatchStarted = () => {
       console.log("Match started by host");
       toast.success("Battle is started!");
 
-      // Small delay to ensure both players start together
       setTimeout(() => {
         const problems = battleData.problems || location.state?.problems;
         if (problems && problems.length > 0) {
@@ -85,33 +111,30 @@ function WaitingWindow() {
       }, 500);
     };
 
-    // Listen for opponent leaving
     const handleOpponentLeft = ({ userId }) => {
       console.log("Opponent left the room:", userId);
       toast.warning("Opponent has left the room");
       setOpponentJoined(false);
-      setOpponentName("");
 
       updateBattleData({
         opponentJoined: false,
         opponentName: null,
+        opponentPhoto: null,
       });
     };
 
-    // Listen for opponent disconnecting
     const handleOpponentDisconnected = ({ userId }) => {
       console.log("Opponent disconnected:", userId);
       toast.error("Opponent disconnected from the room");
       setOpponentJoined(false);
-      setOpponentName("");
 
       updateBattleData({
         opponentJoined: false,
         opponentName: null,
+        opponentPhoto: null,
       });
     };
 
-    // Listen for room cancelled by host
     const handleRoomCancelled = () => {
       toast.error("Host has cancelled the room");
       resetBattle();
@@ -156,18 +179,11 @@ function WaitingWindow() {
         withCredentials: true,
       });
 
-      // Notify opponent that room is cancelled
       socket.emit("cancel-room", { roomId });
-
-      // Emit leave event
       socket.emit("leave-room", { roomId, userId: userData._id });
 
       toast.success("Room cancelled successfully");
-
-      // Reset battle data
       resetBattle();
-
-      // Close modal and navigate
       setShowCancelModal(false);
       navigate("/battle");
     } catch (error) {
@@ -181,7 +197,6 @@ function WaitingWindow() {
   };
 
   const handleLeaveRoom = () => {
-    // Emit leave event to notify host
     socket.emit("leave-room", { roomId, userId: userData._id });
 
     toast.info("You left the room");
@@ -202,11 +217,8 @@ function WaitingWindow() {
     }
 
     console.log(`Starting battle in room: "${roomId}"`);
-
-    // Emit start event to ALL participants (including self)
     socket.emit("start-match", { roomId });
 
-    // Navigate host to first problem immediately
     toast.success("Battle starting!");
     setTimeout(() => {
       const firstProblemId = problems[0]._id || problems[0].id;
@@ -232,6 +244,25 @@ function WaitingWindow() {
       </div>
     );
   }
+
+  // Define player data for clarity in render
+  // If current user is host, their photo is hostPhoto, opponent's is battleData.opponentPhoto
+  // If current user is opponent, their photo is opponentPhoto, host's is battleData.host?.photoURL
+  const isCurrentUserHost = battleData.isHost || location.state?.isHost;
+
+  const hostPhoto = isCurrentUserHost
+    ? userData.photoURL
+    : battleData.host?.photoURL;
+  const hostName = isCurrentUserHost
+    ? userData.name
+    : battleData.host?.name || "Host";
+
+  const opponentPhoto = !isCurrentUserHost
+    ? userData.photoURL
+    : battleData.opponentPhoto; 
+  const opponentName = !isCurrentUserHost
+    ? userData.name
+    : battleData.opponentName; 
 
   return (
     <>
@@ -272,56 +303,50 @@ function WaitingWindow() {
           <div className="mt-8 flex flex-col md:flex-row gap-6 justify-center items-center">
             {/* Host Card */}
             <div className="flex-1 min-w-[180px] bg-zinc-800 border border-blue-500 rounded-xl p-6 flex flex-col items-center shadow-md">
-              <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold mb-3">
-                <img
-                  src="/erenhost.avif"
-                  alt="Host"
-                  className="w-full h-full rounded-full object-cover"
-                />
+              <div className="w-20 h-20 rounded-full bg-zinc-700 border-2 border-blue-500 flex items-center justify-center text-white text-3xl font-bold mb-3">
+                <PlayerImage photoURL={hostPhoto} name={hostName} />
               </div>
               <div className="text-lg font-semibold text-blue-300">
-                Host {battleData.isHost ? "(You)" : ""}
+                Host {isCurrentUserHost ? "(You)" : ""}
               </div>
               <div className="text-zinc-400 text-sm mt-1">
-                {battleData.isHost
-                  ? userData.name
-                  : battleData.host?.name || "Host"}
+                {hostName}
               </div>
             </div>
 
             {/* Opponent Card */}
             <div className="flex-1 min-w-[180px] bg-zinc-800 border border-orange-500 rounded-xl p-6 flex flex-col items-center shadow-md">
-              <div className="w-20 h-20 rounded-full bg-orange-500 flex items-center justify-center text-white text-3xl font-bold mb-3">
-                <img
-                  src="/levaichallenger.png"
-                  alt="Opponent"
-                  className="w-full h-full rounded-full object-cover"
-                />
+              <div className="w-20 h-20 rounded-full bg-zinc-700 border-2 border-orange-500 flex items-center justify-center text-white text-3xl font-bold mb-3">
+                <PlayerImage photoURL={opponentPhoto} name={opponentName} />
               </div>
               <div className="text-lg font-semibold text-orange-300">
-                Opponent {!battleData.isHost ? "(You)" : ""}
+                Opponent {!isCurrentUserHost ? "(You)" : ""}
               </div>
               <div className="text-zinc-400 text-sm mt-1">
                 {opponentJoined
                   ? `${opponentName} ✅`
-                  : !battleData.isHost
-                  ? userData.name
+                  : !isCurrentUserHost
+                  ? userData.name // If current user is opponent, show their name as opponent
                   : "Waiting to join..."}
               </div>
             </div>
           </div>
 
           <div className="mt-8 flex items-center justify-between">
-            <button
-              onClick={() => setShowChat((p) => !p)}
-              className="bg-zinc-600 hover:bg-zinc-800 hover:border-2 border-white text-white rounded-full w-11 h-11 flex items-center justify-center text-xl shadow-md transition-all"
-              data-tooltip-id="copyTooltip"
-              data-tooltip-content={showChat ? "Close Chat" : "Open Chat"}
-            >
-              💬
-            </button>
+            {opponentJoined ? (
+              <button
+                onClick={() => setShowChat((p) => !p)}
+                className="bg-zinc-600 hover:bg-zinc-800 hover:border-2 border-white text-white rounded-full w-11 h-11 flex items-center justify-center text-xl shadow-md transition-all"
+                data-tooltip-id="copyTooltip"
+                data-tooltip-content={showChat ? "Close Chat" : "Open Chat"}
+              >
+                💬
+              </button>
+            ) : (
+              <div></div>
+            )}
 
-            {battleData.isHost || location.state?.isHost ? (
+            {isCurrentUserHost ? (
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleStartBattle}
@@ -356,13 +381,12 @@ function WaitingWindow() {
           </div>
 
           <p className="text-zinc-500 text-sm mt-4 text-center">
-            {battleData.isHost
+            {isCurrentUserHost
               ? "Click 'Start Battle' when your opponent joins."
               : "Wait for the host to start the battle."}
           </p>
         </div>
 
-        {/* Cancel Modal */}
         {showCancelModal && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[60] p-4">
             <div className="bg-zinc-900 rounded-2xl p-6 max-w-md w-full border border-zinc-700 shadow-2xl">
