@@ -18,6 +18,7 @@ function Navbar() {
   const handleLogoutConfirm = async () => {
     try {
       await axios.get(serverURL + "/auth/logout", { withCredentials: true });
+      document.cookie = "token=; Max-Age=0; path=/";
       clearUserData();
       toast.success("Logged out successfully");
       navigate("/");
