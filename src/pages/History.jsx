@@ -1,69 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaTrophy, FaTimes, FaCheck } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { toast } from "react-toastify";
 
 function History() {
   const [selectedMatch, setSelectedMatch] = useState(null);
-  const [matchHistory] = useState([
-    {
-      matchId: "abcd123",
-      opponent: "Opponent Username",
-      problemsSolved: "3/5",
-      result: "Win",
-      date: "2024-01-15",
-      duration: 90, // in minutes
-      points: "12/15",
-      problems: [
-        { name: "Two Sum", solved: true, difficulty: "Easy" },
-        { name: "Add Two Numbers", solved: true, difficulty: "Medium" },
-        { name: "Longest Substring", solved: true, difficulty: "Medium" },
-        {
-          name: "Median of Two Sorted Arrays",
-          solved: false,
-          difficulty: "Hard",
+  const [matchHistory, setMatchHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchMatchHistory();
+  }, []);
+
+  const fetchMatchHistory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:8080/api/user/getmatchhistory", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        { name: "Reverse Integer", solved: false, difficulty: "Easy" },
-      ],
-    },
-    {
-      matchId: "xyz789",
-      opponent: "Another Player",
-      problemsSolved: "2/5",
-      result: "Loss",
-      date: "2024-01-14",
-      duration: 120, // in minutes
-      points: "8/15",
-      problems: [
-        { name: "Valid Parentheses", solved: true, difficulty: "Easy" },
-        { name: "Merge Two Sorted Lists", solved: true, difficulty: "Easy" },
-        {
-          name: "Container With Most Water",
-          solved: false,
-          difficulty: "Medium",
-        },
-        { name: "3Sum", solved: false, difficulty: "Medium" },
-        { name: "Binary Tree Traversal", solved: false, difficulty: "Medium" },
-      ],
-    },
-    {
-      matchId: "def456",
-      opponent: "CodeMaster99",
-      problemsSolved: "4/5",
-      result: "Win",
-      date: "2024-01-13",
-      duration: 60, // in minutes
-      points: "13/15",
-      problems: [
-        { name: "Search Insert Position", solved: true, difficulty: "Easy" },
-        { name: "Maximum Subarray", solved: true, difficulty: "Medium" },
-        { name: "Climbing Stairs", solved: true, difficulty: "Easy" },
-        { name: "Merge Sorted Array", solved: true, difficulty: "Easy" },
-        { name: "Best Time to Buy Stock", solved: false, difficulty: "Easy" },
-      ],
-    },
-    // Add more mock matches as needed
-  ]);
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch match history");
+      }
+
+      const data = await response.json();
+      setMatchHistory(data);
+    } catch (error) {
+      console.error("Error fetching match history:", error);
+      toast.error("Failed to load match history");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleViewDetails = (match) => {
     setSelectedMatch(match);
@@ -102,7 +73,11 @@ function History() {
 
           {/* Match History List */}
           <div className="space-y-6">
-            {matchHistory.length === 0 ? (
+            {loading ? (
+              <div className="bg-zinc-800/50 backdrop-blur-sm border border-zinc-700 rounded-xl p-12 text-center">
+                <p className="text-zinc-400 text-lg">Loading match history...</p>
+              </div>
+            ) : matchHistory.length === 0 ? (
               <div className="bg-zinc-800/50 backdrop-blur-sm border border-zinc-700 rounded-xl p-12 text-center">
                 <p className="text-zinc-400 text-lg">No match history yet</p>
                 <p className="text-zinc-500 text-sm mt-2">
@@ -123,8 +98,8 @@ function History() {
                         <span className="text-zinc-400 font-medium">
                           Match Id:
                         </span>
-                        <span className="text-white font-mono">
-                          {match.matchId}
+                        <span className="text-white font-mono text-sm">
+                          {match.matchId.substring(0, 8)}...
                         </span>
                       </div>
 
@@ -155,13 +130,17 @@ function History() {
                           className={`font-semibold flex items-center gap-2 ${
                             match.result === "Win"
                               ? "text-green-500"
-                              : "text-red-500"
+                              : match.result === "Loss"
+                              ? "text-red-500"
+                              : "text-yellow-500"
                           }`}
                         >
                           {match.result === "Win" ? (
                             <FaTrophy className="text-yellow-500" />
-                          ) : (
+                          ) : match.result === "Loss" ? (
                             <FaTimes />
+                          ) : (
+                            <span className="text-sm">─</span>
                           )}
                           {match.result}
                         </span>
@@ -234,7 +213,7 @@ function History() {
                   <div>
                     <p className="text-zinc-400 text-xs mb-1">Match ID</p>
                     <p className="text-white font-mono text-sm">
-                      {selectedMatch.matchId}
+                      {selectedMatch.matchId.substring(0, 8)}...
                     </p>
                   </div>
                   <div>
@@ -278,74 +257,41 @@ function History() {
                       className={`text-sm font-semibold flex items-center gap-1 ${
                         selectedMatch.result === "Win"
                           ? "text-green-500"
-                          : "text-red-500"
+                          : selectedMatch.result === "Loss"
+                          ? "text-red-500"
+                          : "text-yellow-500"
                       }`}
                     >
                       {selectedMatch.result === "Win" ? (
                         <FaTrophy className="text-yellow-500 text-xs" />
-                      ) : (
+                      ) : selectedMatch.result === "Loss" ? (
                         <FaTimes className="text-xs" />
+                      ) : (
+                        <span className="text-xs">─</span>
                       )}
                       {selectedMatch.result}
                     </p>
                   </div>
                 </div>
-              </div>
 
-              {/* Additional Details Section */}
-              <div className="mt-6 pt-6 border-t border-zinc-700">
-                <h3 className="text-xl font-semibold text-white mb-4">
-                  Problem Breakdown
-                </h3>
-                <div className="space-y-3">
-                  {selectedMatch.problems &&
-                    selectedMatch.problems.map((problem, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center justify-between p-4 rounded-lg border ${
-                          problem.solved
-                            ? "bg-green-900/20 border-green-700/50"
-                            : "bg-red-900/20 border-red-700/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              problem.solved ? "bg-green-600" : "bg-red-600"
-                            }`}
-                          >
-                            {problem.solved ? (
-                              <FaCheck className="text-white text-sm" />
-                            ) : (
-                              <FaTimes className="text-white text-sm" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="text-white font-medium">
-                              {problem.name}
-                            </p>
-                            <p
-                              className={`text-xs ${
-                                problem.difficulty === "Easy"
-                                  ? "text-green-400"
-                                  : problem.difficulty === "Medium"
-                                  ? "text-yellow-400"
-                                  : "text-red-400"
-                              }`}
-                            >
-                              {problem.difficulty}
-                            </p>
-                          </div>
-                        </div>
-                        <span
-                          className={`text-sm font-semibold ${
-                            problem.solved ? "text-green-400" : "text-red-400"
-                          }`}
-                        >
-                          {problem.solved ? "Solved" : "Not Solved"}
-                        </span>
-                      </div>
-                    ))}
+                {/* Comparison Row */}
+                <div className="mt-6 p-4 bg-zinc-800/50 border border-zinc-700 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-zinc-400 text-xs mb-2">Your Solved</p>
+                      <p className="text-white text-2xl font-bold">
+                        {selectedMatch.problemsSolved.split("/")[0]}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-zinc-400 text-xs mb-2">
+                        {selectedMatch.opponent} Solved
+                      </p>
+                      <p className="text-white text-2xl font-bold">
+                        {selectedMatch.opponentSolved.split("/")[0]}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -359,3 +305,4 @@ function History() {
 }
 
 export default History;
+
